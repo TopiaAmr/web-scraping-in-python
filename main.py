@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
+from datetime import datetime as dt
 
 
 def get_driver():
@@ -54,17 +55,18 @@ def clean_text(text: str):
     return text.split(":")[1].strip()
 
 
-def main():
+def main() -> None:
     """
-    Summary:
     Main function to automate a series of actions on a web page using a WebDriver instance.
 
-    Explanation:
-    This function automates a series of actions on a web page, including entering text, clicking elements, extracting and printing output, and finally quitting the WebDriver.
-
     Args:
+        None
+
     Returns:
         None
+
+    This function automates a series of actions on a web page, including entering text,
+    clicking elements, extracting and printing output, and finally quitting the WebDriver.
     """
     d = get_driver()
     d.find_element(By.ID, "id_username").send_keys("automated")
@@ -73,9 +75,12 @@ def main():
     time.sleep(2)
     d.find_element(By.XPATH, "/html/body/nav/div/a").click()
     time.sleep(3)
-    t = d.find_element(By.CLASS_NAME, "text-success")
-    output = int(clean_text(t.text))
-    print(output)
+    for _ in range(10):
+        time.sleep(2)
+        t = dt.now()
+        with open(f"{t.year}_{t.month}_{t.day}_{t.hour}_{t.minute}_{str(t.second) + str(t.microsecond)}.txt", "w") as f:
+            temp: str = d.find_element(By.CLASS_NAME, "text-success").text
+            f.write(str(clean_text(temp)))
     # print(el)
 
     d.quit()
